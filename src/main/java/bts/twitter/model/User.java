@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,7 +31,12 @@ public class User implements UserDetails {
 
     private String name;
 
+    @Column(unique = true)
+    private String email;
+
     private String pass;
+
+    private String confirmationCode;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -38,10 +44,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "author")
     private List<Message> messages;
 
-    public User(String name, String pass, Role role) {
+    public User(String name, String email, String pass, String confirmationCode, Role role) {
         this.name = name;
+        this.email = email;
         this.pass = pass;
         this.role = role;
+        this.confirmationCode = confirmationCode;
     }
 
     @Override
@@ -76,6 +84,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return getConfirmationCode().isEmpty();
     }
 }

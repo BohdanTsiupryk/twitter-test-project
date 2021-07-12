@@ -1,0 +1,19 @@
+spring:
+  freemarker:
+    expose-request-attributes: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/twitter
+    username: postgres
+    password: 1
+    driver-class-name: org.postgresql.Driver
+
+mail:
+  properties:
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}

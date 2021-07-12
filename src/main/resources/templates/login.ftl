@@ -5,6 +5,8 @@
     <title>LOGIN</title>
 </head>
 <body>
+${message!""}
+
 <form method="post" action="/login">
     <input type="hidden" name="_csrf" value="${_csrf.token}"/>
     <input name="username" type="text">

@@ -1,5 +1,6 @@
 package bts.twitter.controller;
 
+import bts.twitter.MailService;
 import bts.twitter.model.Role;
 import bts.twitter.model.User;
 import bts.twitter.repository.UserRepo;
@@ -8,11 +9,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/registration")
@@ -22,6 +25,8 @@ public class RegistrationController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private MailService mailService;
 
     @GetMapping
     public String getView() {
@@ -30,7 +35,8 @@ public class RegistrationController {
 
     @PostMapping
     public String registration(
-            @RequestParam("name") String name,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam("email") String email,
             @RequestParam("password") String password,
             @RequestParam("password_confirm") String passwordConfirm,
             Model model
@@ -41,14 +47,46 @@ public class RegistrationController {
 
             return "registration";
         }
+
+        String trim = name.trim();
+
+        String confirmationCode = generateRandomCode();
+
         User user = new User(
-                name,
+                trim.isEmpty() ? "username" : trim,
+                email,
                 passwordEncoder.encode(password),
+                confirmationCode,
                 Role.USER
         );
 
         userRepo.save(user);
 
+        mailService.sendConfirmCode(email, confirmationCode);
+
         return "redirect:/messages";
+    }
+
+    @GetMapping("/confirm/{code}")
+    public String confirm(@PathVariable String code, Model model) {
+
+        Optional<User> user = userRepo.findByConfirmationCode(code);
+
+        if (user.isPresent()) {
+            User fromDb = user.get();
+
+            fromDb.setConfirmationCode("");
+            userRepo.save(fromDb);
+
+            model.addAttribute("message", "You activate your account");
+        } else {
+            model.addAttribute("message", "We don`t found your confirmation code");
+        }
+
+        return "login";
+    }
+
+    private String generateRandomCode() {
+        return UUID.randomUUID().toString();
     }
 }
