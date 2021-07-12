@@ -7,9 +7,12 @@
 <body>
 <h3>id - ${user.id}</h3>
 <h3>name - ${user.name}</h3>
-<h3>message :<br></h3>
-<#list messages as message>
-    <h4 style="color: darkslategrey; margin-left: 50px">${message.message}</h4>
-</#list>
+
+<#if messages??>
+    <h3>message :<br></h3>
+    <#list messages as message>
+        <h4 style="color: darkslategrey; margin-left: 50px">${message.message}</h4>
+    </#list>
+</#if>
 </body>
 </html>

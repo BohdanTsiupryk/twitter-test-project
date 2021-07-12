@@ -2,6 +2,7 @@ package bts.twitter.controller;
 
 import bts.twitter.model.User;
 import bts.twitter.repository.UserRepo;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +23,18 @@ public class UserController {
 
     @GetMapping("/info/{id}")
     public String getInfo(@PathVariable("id") long userId,
+                          @AuthenticationPrincipal User authUser,
                           Model model) {
+
+
         User user = userRepo.findById(userId)
                 .orElseThrow(NoSuchElementException::new);
 
         model.addAttribute("user", user);
-        model.addAttribute("messages", user.getMessages());
+
+        if (userId == authUser.getId()) {
+            model.addAttribute("messages", user.getMessages());
+        }
 
         return "user-info";
     }
