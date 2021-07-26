@@ -26,13 +26,16 @@ public class Message {
 
     private LocalDateTime creationDate;
 
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
 
-    public Message(String message, LocalDateTime creationDate, User author) {
+    public Message(String message, LocalDateTime creationDate, User author, String image) {
         this.message = message;
         this.creationDate = creationDate;
         this.author = author;
+        this.image = image;
     }
 }

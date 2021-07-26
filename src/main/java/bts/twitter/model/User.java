@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -84,6 +85,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return getConfirmationCode().isEmpty();
+        return true;
     }
 }
