@@ -2,8 +2,11 @@ package bts.twitter.controller;
 
 import bts.twitter.model.Message;
 import bts.twitter.model.User;
+import bts.twitter.model.Weather;
+import bts.twitter.model.WeatherData;
 import bts.twitter.repository.MessageRepo;
 import bts.twitter.repository.UserRepo;
+import bts.twitter.service.WeatherService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,22 +30,30 @@ public class MessageController {
 
     private final MessageRepo messageRepo;
     private final UserRepo userRepo;
+    private final WeatherService weatherService;
 
     @Value("${image.dir}")
     private String directoryPath;
 
-    public MessageController(MessageRepo messageRepo, UserRepo userRepo) {
+    public MessageController(MessageRepo messageRepo, UserRepo userRepo, WeatherService weatherService) {
         this.messageRepo = messageRepo;
         this.userRepo = userRepo;
+        this.weatherService = weatherService;
     }
 
     @GetMapping
     public String messages(Model model) {
         List<Message> messages = messageRepo.findAll();
         List<User> users = userRepo.findAll();
+        WeatherData lviv = weatherService.getWeather("lviv");
+
+        System.out.println(lviv);
+        Weather weather = lviv.getWeather();
 
         model.addAttribute("messages", messages);
         model.addAttribute("users", users);
+        model.addAttribute("cityname", lviv.getCityName());
+        model.addAttribute("description", weather.getDescription());
 
         return "messages";
     }

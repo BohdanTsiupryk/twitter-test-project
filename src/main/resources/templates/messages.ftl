@@ -6,6 +6,11 @@
 </head>
 <body>
 
+<div>
+    <h4>${cityname}</h4>
+    <h4>${description}</h4>
+</div>
+
 <form action="/messages" method="post" enctype="multipart/form-data">
     <label>
         Message -
