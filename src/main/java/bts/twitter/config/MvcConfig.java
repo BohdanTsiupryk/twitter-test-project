@@ -34,7 +34,7 @@ public class MvcConfig implements WebMvcConfigurer {
     public ViewResolver viewResolver() {
         FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
         resolver.setCache(true);
-        resolver.setPrefix("classpath:\\templates\\");
+//        resolver.setPrefix("classpath:\\templates\\");
         resolver.setSuffix(".ftl");
 
         return resolver;
