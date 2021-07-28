@@ -8,9 +8,9 @@ spring:
     database: postgresql
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/twitter
-    username: postgres
-    password: 1
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/twitter}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:1}
     driver-class-name: org.postgresql.Driver
 
 mail:
