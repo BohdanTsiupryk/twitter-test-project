@@ -47,7 +47,6 @@ public class MessageController {
         List<User> users = userRepo.findAll();
         WeatherData lviv = weatherService.getWeather("lviv");
 
-        System.out.println(lviv);
         Weather weather = lviv.getWeather();
 
         model.addAttribute("messages", messages);
@@ -91,13 +90,13 @@ public class MessageController {
 
         String randomName = UUID.randomUUID().toString();
         String result = randomName + "." + multipartFile.getOriginalFilename();
-        File newFile = Paths.get(directoryPath + "/" + result).toFile();
-
-        try {
-            multipartFile.transferTo(newFile);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+//        File newFile = Paths.get(directoryPath + "/" + result).toFile();
+//
+//        try {
+//            multipartFile.transferTo(newFile);
+//        } catch (IOException e) {
+//            System.out.println(e);
+//        }
 
         return result;
     }
