@@ -34,7 +34,6 @@ public class MvcConfig implements WebMvcConfigurer {
     public ViewResolver viewResolver() {
         FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
         resolver.setCache(true);
-//        resolver.setPrefix("classpath:\\templates\\");
         resolver.setSuffix(".ftl");
 
         return resolver;
@@ -43,7 +42,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public FreeMarkerConfigurer freeMarkerConfigurer() {
         FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-        configurer.setTemplateLoaderPath("classpath:\\templates\\");
+        configurer.setTemplateLoaderPath("classpath:/templates/");
 
         return configurer;
     }
