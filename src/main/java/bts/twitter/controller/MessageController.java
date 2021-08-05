@@ -6,6 +6,7 @@ import bts.twitter.model.Weather;
 import bts.twitter.model.WeatherData;
 import bts.twitter.repository.MessageRepo;
 import bts.twitter.repository.UserRepo;
+import bts.twitter.service.AwsS3Service;
 import bts.twitter.service.WeatherService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,12 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/messages")
@@ -31,14 +28,13 @@ public class MessageController {
     private final MessageRepo messageRepo;
     private final UserRepo userRepo;
     private final WeatherService weatherService;
+    private final AwsS3Service awsS3Service;
 
-    @Value("${image.dir}")
-    private String directoryPath;
-
-    public MessageController(MessageRepo messageRepo, UserRepo userRepo, WeatherService weatherService) {
+    public MessageController(MessageRepo messageRepo, UserRepo userRepo, WeatherService weatherService, AwsS3Service awsS3Service) {
         this.messageRepo = messageRepo;
         this.userRepo = userRepo;
         this.weatherService = weatherService;
+        this.awsS3Service = awsS3Service;
     }
 
     @GetMapping
@@ -61,12 +57,12 @@ public class MessageController {
     public String addMessage(@RequestParam("message") String newMessage,
                              @RequestParam("userId") long userId,
                              @RequestParam("image") MultipartFile multipartFile
-                             ) {
+    ) {
         Message message = new Message(
                 newMessage,
                 LocalDateTime.now(),
                 userRepo.getById(userId),
-                saveFile(multipartFile)
+                awsS3Service.saveFile(multipartFile)
         );
 
         messageRepo.save(message);
@@ -76,28 +72,11 @@ public class MessageController {
 
     @GetMapping("/delete/{id}")
     public String deleteMessage(@PathVariable("id") long id) {
-        messageRepo.deleteById(id);
+        Message message = messageRepo.getById(id);
+        messageRepo.delete(message);
+
+        awsS3Service.deleteFile(message.getImage());
 
         return "redirect:/messages";
-    }
-
-    private String saveFile(MultipartFile multipartFile) {
-        File dir = Paths.get(directoryPath).toFile();
-
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-
-        String randomName = UUID.randomUUID().toString();
-        String result = randomName + "." + multipartFile.getOriginalFilename();
-//        File newFile = Paths.get(directoryPath + "/" + result).toFile();
-//
-//        try {
-//            multipartFile.transferTo(newFile);
-//        } catch (IOException e) {
-//            System.out.println(e);
-//        }
-
-        return result;
     }
 }
