@@ -62,7 +62,7 @@ public class MessageController {
                 newMessage,
                 LocalDateTime.now(),
                 userRepo.getById(userId),
-                awsS3Service.saveFile(multipartFile)
+                "awsS3Service.saveFile(multipartFile)"
         );
 
         messageRepo.save(message);
@@ -75,7 +75,7 @@ public class MessageController {
         Message message = messageRepo.getById(id);
         messageRepo.delete(message);
 
-        awsS3Service.deleteFile(message.getImage());
+//        "awsS3Service.deleteFile(message.getImage());";
 
         return "redirect:/messages";
     }
